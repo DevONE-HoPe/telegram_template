@@ -2,13 +2,23 @@ from aiogram import Router
 
 
 def get_handlers_router() -> Router:
-    from . import start, all_message, tap_handler, start_game, cancel, profile, help, top, admin
+    from . import (
+        start,
+        all_message,
+        tap_handler,
+        start_game,
+        cancel,
+        profile,
+        help,
+        top,
+        admin,
+    )
 
     router = Router()
     router.include_router(admin.router)
-    
+
     router.include_router(start.router)
-    
+
     router.include_router(help.router)
 
     router.include_router(cancel.router)

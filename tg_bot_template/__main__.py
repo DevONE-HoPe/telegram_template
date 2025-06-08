@@ -7,9 +7,13 @@ import aioschedule as schedule
 
 from tg_bot_template.core.loader import bot, dp
 from tg_bot_template.handlers import get_handlers_router
-from tg_bot_template.keyboards.default_commands import remove_default_commands, set_default_commands
+from tg_bot_template.keyboards.default_commands import (
+    remove_default_commands,
+    set_default_commands,
+)
 from tg_bot_template.middlewares import register_middlewares
 from tg_bot_template.core.config import settings
+
 
 async def send_daily_message():
     try:
@@ -53,7 +57,9 @@ async def on_startup() -> None:
     if settings.DAILY_MESSAGE_ENABLED and settings.CREATOR_ID:
         schedule.every().day.at(settings.DAILY_MESSAGE_TIME).do(send_daily_message)
         asyncio.create_task(run_scheduler())
-        logger.info(f"Daily message scheduler started ({settings.DAILY_MESSAGE_TIME} daily)")
+        logger.info(
+            f"Daily message scheduler started ({settings.DAILY_MESSAGE_TIME} daily)"
+        )
 
     logger.info("bot started")
 

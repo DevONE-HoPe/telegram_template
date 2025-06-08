@@ -16,12 +16,16 @@ users_commands: dict[str, dict[str, str]] = {
     },
 }
 
+
 async def set_default_commands(bot: Bot) -> None:
     await remove_default_commands(bot)
 
     for language_code, commands in users_commands.items():
         await bot.set_my_commands(
-            [BotCommand(command=command, description=description) for command, description in commands.items()],
+            [
+                BotCommand(command=command, description=description)
+                for command, description in commands.items()
+            ],
             scope=BotCommandScopeDefault(),
             language_code=language_code,
         )

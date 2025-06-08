@@ -3,6 +3,7 @@ from aiogram.types import Message
 
 from tg_bot_template.core.config import settings
 
+
 class AdminFilter(BaseFilter):
 
     async def __call__(self, message: Message) -> bool:

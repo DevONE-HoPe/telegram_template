@@ -43,14 +43,14 @@ async def update_user_profile(
     photo: str | None = None,
 ) -> None:
     update_data = {}
-    
+
     if name is not None:
-        update_data['name'] = name
+        update_data["name"] = name
     if info is not None:
-        update_data['info'] = info
+        update_data["info"] = info
     if photo is not None:
-        update_data['photo'] = photo
-    
+        update_data["photo"] = photo
+
     if update_data:
         stmt = update(UserModel).where(UserModel.id == user_id).values(**update_data)
         await session.execute(stmt)
@@ -61,10 +61,10 @@ async def increment_user_taps(
     session: AsyncSession,
     user_id: int,
 ) -> None:
-    stmt = update(UserModel).where(UserModel.id == user_id).values(
-        taps=UserModel.taps + 1
+    stmt = (
+        update(UserModel).where(UserModel.id == user_id).values(taps=UserModel.taps + 1)
     )
-    
+
     await session.execute(stmt)
     await session.commit()
 
@@ -79,10 +79,10 @@ async def get_top_users_by_taps(
         .order_by(UserModel.taps.desc())
         .limit(limit)
     )
-    
+
     result = await session.execute(query)
     users = result.scalars().all()
-    
+
     return list(users)
 
 
@@ -95,18 +95,20 @@ async def get_user_count(session: AsyncSession) -> int:
     count = result.scalar_one_or_none() or 0
     return int(count)
 
+
 async def get_user_taps(session: AsyncSession, user_id: int) -> int:
     query = select(UserModel.taps).filter_by(id=user_id)
-    
+
     result = await session.execute(query)
     taps = result.scalar_one_or_none()
-    
+
     return taps or 0
+
 
 async def get_total_taps(session: AsyncSession) -> int:
     query = select(func.sum(UserModel.taps))
-    
+
     result = await session.execute(query)
     total_taps = result.scalar_one_or_none()
-    
+
     return total_taps or 0

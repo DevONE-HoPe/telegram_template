@@ -3,7 +3,12 @@ from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from asyncpg import Connection
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from tg_bot_template.core.config import settings
 

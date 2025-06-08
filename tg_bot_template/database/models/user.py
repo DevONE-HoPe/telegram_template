@@ -13,7 +13,7 @@ class UserModel(Base):
     id: Mapped[big_int_pk]
     username: Mapped[str | None] = mapped_column(String(50))
     created_at: Mapped[created_at]
-    taps: Mapped[int] = mapped_column(BigInteger, server_default='0', nullable=False)
+    taps: Mapped[int] = mapped_column(BigInteger, server_default="0", nullable=False)
     name: Mapped[str | None] = mapped_column(Text)
     info: Mapped[str | None] = mapped_column(Text)
     photo: Mapped[str | None] = mapped_column(Text)

@@ -12,7 +12,10 @@ BOT_DIR = Path(__file__).absolute().parent.parent
 
 
 class EnvBaseSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
+
 
 class BotSettings(EnvBaseSettings):
     BOT_TOKEN: str
@@ -45,7 +48,9 @@ class DBSettings(EnvBaseSettings):
     def database_url_psycopg2(self) -> str:
         if self.DB_PASS:
             return f"postgresql://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
-        return f"postgresql://{self.DB_USER}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return (
+            f"postgresql://{self.DB_USER}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        )
 
 
 class CacheSettings(EnvBaseSettings):

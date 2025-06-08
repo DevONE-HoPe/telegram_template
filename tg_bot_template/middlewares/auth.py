@@ -35,7 +35,7 @@ class AuthMiddleware(BaseMiddleware):
 
         if await user_exists(session, user.id):
             return await handler(event, data)
-        
+
         # 1 проверка на наличие username
         if not user.username:
             await asyncio.sleep(2)
@@ -44,8 +44,8 @@ class AuthMiddleware(BaseMiddleware):
                 "смогут найти другие участники!"
             )
             await message.answer(register_failed)
-            return 
-        
+            return
+
         # 2 проверка на наличие passphrase
         passphrase = settings.REGISTER_PASSPHRASE
         if passphrase is not None and message.text != passphrase:
@@ -53,7 +53,9 @@ class AuthMiddleware(BaseMiddleware):
             await message.answer("Enter passphrase for register in bot:")
             return
 
-        logger.info(f"new user registration | user_id: {user.id} | message: {message.text}")
+        logger.info(
+            f"new user registration | user_id: {user.id} | message: {message.text}"
+        )
 
         await add_user(session=session, user_id=user.id, username=user.username)
 
