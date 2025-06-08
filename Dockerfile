@@ -1,39 +1,18 @@
-FROM python:3.10 as base
-# set work directory
-WORKDIR /app/
+FROM ghcr.io/astral-sh/uv:0.5-python3.13-alpine
 
-FROM base as docker-entrypoint
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    PATH="/usr/src/app/.venv/bin:$PATH"
 
-FROM docker-entrypoint as non-root
-RUN useradd -ms /bin/bash app
-USER app
+WORKDIR /usr/src/app
 
-FROM base as requirements-builder
+COPY . .
 
-WORKDIR /build/
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen \
+    && adduser -D appuser \
+    && chown -R appuser:appuser .
 
-RUN pip --no-cache-dir install poetry
+USER appuser
 
-COPY pyproject.toml poetry.lock /build/
-
-RUN poetry export --without-hashes -f requirements.txt -o requirements.txt
-
-FROM non-root as app
-
-COPY --from=requirements-builder /build/requirements.txt /app/requirements.txt
-
-ENV PYTHONFAULTHANDLER=1 \
-  PYTHONUNBUFFERED=1 \
-  PIP_DISABLE_PIP_VERSION_CHECK=on \
-  PIP_DEFAULT_TIMEOUT=100
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-# copy project
-COPY tg_bot_template ./tg_bot_template/
-
-# run app
-ENTRYPOINT ["python", "-m"]
-CMD ["tg_bot_template.bot"]
-
-FROM app
+CMD ["python", "-m", "bot"]
