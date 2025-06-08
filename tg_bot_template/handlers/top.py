@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from aiogram import Router, F
 from aiogram.types import Message
+from aiogram.filters import Command, or_f
 from tg_bot_template.services.users import (
     get_user_taps,
     get_top_users_by_taps,
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
 router = Router()
 
 
-@router.message(F.text == "Рейтинг")
+@router.message(or_f(F.text == "Рейтинг", Command("rating")))
 async def handle_rating_button(message: Message, session: AsyncSession):
     user_id = message.from_user.id
 

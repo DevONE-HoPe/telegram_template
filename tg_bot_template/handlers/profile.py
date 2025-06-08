@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from aiogram import Router, F
 from aiogram.types import Message
+from aiogram.filters import Command, or_f
 from aiogram.fsm.context import FSMContext
 from tg_bot_template.keyboards.reply.cancel import cancel_keyboard
 from tg_bot_template.keyboards.reply.menu import main_keyboard
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
 router = Router()
 
 
-@router.message(F.text == "Мой профиль")
+@router.message(or_f(F.text == "Мой профиль", Command("set_info")))
 async def handle_profile_button(message: Message, state: FSMContext):
     text = "Напишите ваше имя"
 

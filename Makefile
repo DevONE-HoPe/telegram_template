@@ -30,4 +30,4 @@ stop_docker:
 	docker-compose down
 
 start:
-	@uv run run python -m $(SERVICE_DIR).app
+	@uv run python -m $(SERVICE_DIR)
