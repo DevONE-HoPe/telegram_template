@@ -21,6 +21,12 @@ class BotSettings(EnvBaseSettings):
 
     CREATOR_ID: int | None = None
 
+    DAILY_MESSAGE_ENABLED: bool = True
+    DAILY_MESSAGE_TIME: str = "12:00"
+    DAILY_MESSAGE_TEXT: str = "Bot is alive"
+
+    IS_PRODUCTION: bool = False
+
 
 class DBSettings(EnvBaseSettings):
     DB_HOST: str = "postgres"

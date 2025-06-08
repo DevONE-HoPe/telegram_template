@@ -73,7 +73,12 @@ async def get_top_users_by_taps(
     session: AsyncSession,
     limit: int = 1,
 ) -> list[UserModel]:
-    query = select(UserModel).order_by(UserModel.taps.desc()).limit(limit)
+    query = (
+        select(UserModel)
+        .where(UserModel.taps > 0)
+        .order_by(UserModel.taps.desc())
+        .limit(limit)
+    )
     
     result = await session.execute(query)
     users = result.scalars().all()

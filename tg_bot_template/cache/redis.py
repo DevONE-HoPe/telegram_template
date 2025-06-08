@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 
 from tg_bot_template.cache.serialization import AbstractSerializer, PickleSerializer
 from tg_bot_template.core.loader import redis_client
+from tg_bot_template.core.config import settings
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
@@ -26,6 +27,12 @@ def build_key(*args: Args, **kwargs: Kwargs) -> str:
     return f"{args_str}:{kwargs_str}"
 
 
+def _check_redis_availability() -> None:
+    """Check if Redis is available. Raise error in production if not."""
+    if redis_client is None and settings.IS_PRODUCTION:
+        raise RuntimeError("Redis client is not available in production mode. Please configure Redis connection.")
+
+
 async def set_redis_value(
     key: bytes | str,
     value: bytes | str,
@@ -33,6 +40,11 @@ async def set_redis_value(
     is_transaction: bool = False,
 ) -> None:
     """Set a value in Redis with an optional time-to-live (TTL)."""
+    _check_redis_availability()
+    
+    if redis_client is None:
+        return
+    
     async with redis_client.pipeline(transaction=is_transaction) as pipeline:
         await pipeline.set(key, value)
         if ttl:
@@ -67,6 +79,11 @@ def cached(
     def decorator(func: Callable[..., Awaitable[_Func]]) -> Callable[..., Awaitable[_Func]]:
         @wraps(func)
         async def wrapper(*args: Args, **kwargs: Kwargs) -> Any:
+            _check_redis_availability()
+            
+            if cache is None:
+                return await func(*args, **kwargs)
+            
             key = key_builder(*args, **kwargs)
             key = f"{namespace}:{func.__module__}:{func.__name__}:{key}"
 
@@ -109,6 +126,11 @@ async def clear_cache(
     - namespace (str, optional): A string indicating the namespace for the cache. Defaults to "main".
 
     """
+    _check_redis_availability()
+    
+    if redis_client is None:
+        return
+    
     namespace = kwargs.get("namespace", "main")
 
     key = build_key(*args, **kwargs)
